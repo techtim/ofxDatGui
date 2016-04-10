@@ -193,6 +193,9 @@ class ofxDatGuiScrollView : public ofxDatGuiComponent {
             mBackground = color;
         }
     
+        void setNumVisible(int num) {
+            mNumVisible = num;
+        }
     /*
         update & draw
     */

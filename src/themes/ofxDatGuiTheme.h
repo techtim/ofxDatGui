@@ -178,13 +178,13 @@ class ofxDatGuiTheme{
             float labelWidth = 115.0f;
             float labelMargin = 24.0f;
             float breakHeight = 3.0f;
-            bool upperCaseLabels = true;
+            bool upperCaseLabels = false;
             
         // component specific rules & settings //
         
             struct {
                 int highlightPadding = 5;
-                bool forceUpperCase = true;
+                bool forceUpperCase = false;
             } textInput;
         
             struct {
