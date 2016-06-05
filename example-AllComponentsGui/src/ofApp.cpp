@@ -67,6 +67,7 @@ void ofApp::setup()
     
 // once the gui has been assembled, register callbacks to listen for component specific events //
     gui->onButtonEvent(this, &ofApp::onButtonEvent);
+    gui->onToggleEvent(this, &ofApp::onToggleEvent);
     gui->onSliderEvent(this, &ofApp::onSliderEvent);
     gui->onTextInputEvent(this, &ofApp::onTextInputEvent);
     gui->on2dPadEvent(this, &ofApp::on2dPadEvent);
@@ -89,20 +90,25 @@ void ofApp::setup()
     tIndex = 0;
     
 // launch the app //
-   // mFullscreen = true;
+    mFullscreen = true;
     refreshWindow();
+}
+
+void ofApp::onButtonEvent(ofxDatGuiButtonEvent e)
+{
+    cout << "onButtonEvent: " << e.target->getLabel() << endl;
+}
+
+void ofApp::onToggleEvent(ofxDatGuiToggleEvent e)
+{
+    if (e.target->is("toggle fullscreen")) toggleFullscreen();
+    cout << "onToggleEvent: " << e.target->getLabel() << " " << e.checked << endl;
 }
 
 void ofApp::onSliderEvent(ofxDatGuiSliderEvent e)
 {
     cout << "onSliderEvent: " << e.target->getLabel() << " "; e.target->printValue();
     if (e.target->is("datgui opacity")) gui->setOpacity(e.scale);
-}
-
-void ofApp::onButtonEvent(ofxDatGuiButtonEvent e)
-{
-    if (e.target->is("toggle fullscreen")) toggleFullscreen();
-    cout << "onButtonEvent: " << e.target->getLabel() << " " << e.target->getEnabled() << endl;
 }
 
 void ofApp::onTextInputEvent(ofxDatGuiTextInputEvent e)
@@ -137,11 +143,6 @@ void ofApp::update() { }
 
 void ofApp::keyPressed(int key)
 {
-    if (key == 'n') {
-        gui->getSlider("position y")->setPrecision(3, true);
-        gui->getSlider("position y")->setValue(-1.123756789);
-        gui->getSlider("position y")->printValue();
-    }
     if (key == 'f') {
         toggleFullscreen();
     }   else if (key == 32){
@@ -153,6 +154,7 @@ void ofApp::keyPressed(int key)
 void ofApp::toggleFullscreen()
 {
     mFullscreen = !mFullscreen;
+    gui->getToggle("toggle fullscreen")->setChecked(mFullscreen);
     refreshWindow();
 }
 
