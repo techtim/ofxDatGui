@@ -41,6 +41,10 @@ ofxDatGui::ofxDatGui(ofxDatGuiAnchor anchor)
     anchorGui();
 }
 
+ofxDatGui::~ofxDatGui() {
+    mGuis.erase(std::remove(mGuis.begin(), mGuis.end(), this), mGuis.end());
+}
+
 void ofxDatGui::init()
 {
     mMoving = false;
@@ -61,8 +65,8 @@ void ofxDatGui::init()
     mRowSpacing = theme->layout.vMargin;
     mGuiBackground = theme->color.guiBackground;
     
-// enable autodraw by default //
-    setAutoDraw(true);
+// disable autodraw by default //
+    setAutoDraw(false);
     
 // assign focus to this newly created gui //
     mActiveGui = this;
@@ -788,7 +792,7 @@ void ofxDatGui::layoutGui()
         mHeight += items[i]->getHeight() + mRowSpacing;
     }
     // move the footer back to the top of the gui //
-    if (!mExpanded) mGuiFooter->setPosition(mPosition.x, mPosition.y);
+    if (!mExpanded && mGuiFooter != nullptr) mGuiFooter->setPosition(mPosition.x, mPosition.y);
     mGuiBounds = ofRectangle(mPosition.x, mPosition.y, mWidth, mHeight);
 }
 
@@ -834,7 +838,7 @@ void ofxDatGui::update()
         mMoving = false;
         mMouseDown = false;
     // this gui has focus so let's see if any of its components were interacted with //
-        if (mExpanded == false){
+        if (mExpanded == false && mGuiFooter != nullptr){
             mGuiFooter->update();
             mMouseDown = mGuiFooter->getMouseDown();
         }   else{
@@ -890,6 +894,13 @@ void ofxDatGui::draw()
             for (int i=0; i<items.size(); i++) items[i]->drawColorPicker();
         }
     ofPopStyle();
+}
+
+void ofxDatGui::clear() {
+    for (auto it = items.begin(); it != items.end(); it++) {
+        delete (*it);
+    }
+    items.clear();
 }
 
 void ofxDatGui::onDraw(ofEventArgs &e)

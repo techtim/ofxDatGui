@@ -437,12 +437,7 @@ class ofxDatGuiDropdown : public ofxDatGuiGroup {
         {
             mOption = 0;
             mType = ofxDatGuiType::DROPDOWN;
-            for(int i=0; i<options.size(); i++){
-                ofxDatGuiDropdownOption* opt = new ofxDatGuiDropdownOption(options[i]);
-                opt->setIndex(children.size());
-                opt->onButtonEvent(this, &ofxDatGuiDropdown::onOptionSelected);
-                children.push_back(opt);
-            }
+            setDropdownList(options);
             setTheme(ofxDatGuiComponent::theme.get());
         }
     
@@ -461,6 +456,16 @@ class ofxDatGuiDropdown : public ofxDatGuiGroup {
             mLabel.width = mStyle.width;
             mLabel.rightAlignedXpos = mIcon.x - mLabel.margin;
             ofxDatGuiComponent::positionLabel();
+        }
+    
+        void setDropdownList(const vector<string>& options) {
+            children.erase(children.begin(), children.end());
+            for(int i=0; i<options.size(); i++){
+                ofxDatGuiDropdownOption* opt = new ofxDatGuiDropdownOption(options[i]);
+                opt->setIndex(children.size());
+                opt->onButtonEvent(this, &ofxDatGuiDropdown::onOptionSelected);
+                children.push_back(opt);
+            }
         }
     
         void select(int cIndex)

@@ -119,11 +119,17 @@ class ofxDatGuiToggle : public ofxDatGuiButton {
         void toggle()
         {
             mChecked = !mChecked;
+            if (mBoundb != nullptr) {
+                *mBoundb = mChecked;
+            }
         }
     
         void setChecked(bool check)
         {
             mChecked = check;
+            if (mBoundb != nullptr) {
+                *mBoundb = mChecked;
+            }
         }
     
         bool getChecked()
@@ -146,6 +152,12 @@ class ofxDatGuiToggle : public ofxDatGuiButton {
             }
         }
     
+        void bind(bool &val)
+        {
+            mBoundb = &val;
+            mChecked= *mBoundb;
+        }
+    
         static ofxDatGuiToggle* getInstance() { return new ofxDatGuiToggle("X"); }
     
     protected:
@@ -162,10 +174,14 @@ class ofxDatGuiToggle : public ofxDatGuiButton {
             }   else {
                 toggleEventCallback(ofxDatGuiToggleEvent(this, mChecked));
             }
+            if (mBoundb != nullptr) {
+                *mBoundb = mChecked;
+            }
         }
     
     private:
         bool mChecked;
+        bool *mBoundb = nullptr;
         shared_ptr<ofImage> radioOn;
         shared_ptr<ofImage> radioOff;
 

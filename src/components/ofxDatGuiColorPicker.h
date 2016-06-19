@@ -171,6 +171,12 @@ class ofxDatGuiColorPicker : public ofxDatGuiTextInput {
     
         static ofxDatGuiColorPicker* getInstance() { return new ofxDatGuiColorPicker("X"); }
     
+        void bind(ofColor &color)
+        {
+            mBoundColor = &color;
+            mColor = *mBoundColor;
+        }
+    
     protected:
     
         void onMouseEnter(ofPoint mouse)
@@ -195,10 +201,8 @@ class ofxDatGuiColorPicker : public ofxDatGuiTextInput {
     
         void onInputChanged(ofxDatGuiInternalEvent e)
         {
-            mColor = ofColor::fromHex(ofHexToInt(mInput.getText()));
+            setColor(ofColor::fromHex(ofHexToInt(mInput.getText())));
         // set the input field text & background colors //
-            mInput.setBackgroundColor(mColor);
-            mInput.setTextInactiveColor(mColor.getBrightness() < BRIGHTNESS_THRESHOLD ? ofColor::white : ofColor::black);
         // update the gradient picker //
             gColors[2] = mColor;
             gColors[0] = ofColor(mColor.r/2, mColor.g/2, mColor.b/2);
@@ -222,13 +226,16 @@ class ofxDatGuiColorPicker : public ofxDatGuiTextInput {
             mInput.setText(ofToUpper(res));
             mInput.setBackgroundColor(mColor);
             mInput.setTextInactiveColor(mColor.getBrightness() < BRIGHTNESS_THRESHOLD ? ofColor::white : ofColor::black);
+            if (mBoundColor != nullptr) {
+                *mBoundColor = mColor;
+            }
         }
     
     private:
 
         ofColor mColor;
         ofColor gColor;
-    
+        ofColor * mBoundColor = nullptr;
         struct {
             shared_ptr<ofImage> image;
             ofRectangle rect;

@@ -31,13 +31,15 @@ class ofxDatGui : public ofxDatGuiInteractiveObject
     
         ofxDatGui(int x, int y);
         ofxDatGui(ofxDatGuiAnchor anchor = ofxDatGuiAnchor::TOP_LEFT);
-    
+        ~ofxDatGui();
+
         void draw();
         void update();
         void focus();
         void expand();
         void toggle();
         void collapse();
+        void clear();
     
         void setWidth(int width, float labelWidth = 0.35f);
         void setVisible(bool visible);
