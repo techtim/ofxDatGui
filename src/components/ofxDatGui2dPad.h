@@ -32,7 +32,7 @@ class ofxDatGui2dPad : public ofxDatGuiComponent {
             mPercentX = 0.5f;
             mPercentY = 0.5f;
             mType = ofxDatGuiType::PAD2D;
-            setTheme(ofxDatGuiComponent::theme.get());
+            setTheme(ofxDatGuiComponent::getTheme());
             setBounds(ofRectangle(0, 0, ofGetWidth(), ofGetHeight()), true);
             ofAddListener(ofEvents().windowResized, this, &ofxDatGui2dPad::onWindowResized);
         }
@@ -42,12 +42,17 @@ class ofxDatGui2dPad : public ofxDatGuiComponent {
             mPercentX = 0.5f;
             mPercentY = 0.5f;
             mType = ofxDatGuiType::PAD2D;
-            setTheme(ofxDatGuiComponent::theme.get());
+            setTheme(ofxDatGuiComponent::getTheme());
             setBounds(bounds, false);
             ofAddListener(ofEvents().windowResized, this, &ofxDatGui2dPad::onWindowResized);
         }
     
-        void setTheme(ofxDatGuiTheme* theme)
+        ~ofxDatGui2dPad()
+        {
+            ofRemoveListener(ofEvents().windowResized, this, &ofxDatGui2dPad::onWindowResized);
+        }
+    
+        void setTheme(const ofxDatGuiTheme* theme)
         {
             setComponentStyle(theme);
             mStyle.height = theme->layout.pad2d.height;

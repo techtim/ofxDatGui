@@ -39,8 +39,11 @@ class ofxDatGuiComponent : public ofxDatGuiInteractiveObject
         bool    is(string name);
     
         void    setLabel(string label);
-        void    setLabelColor(ofColor color);
         string  getLabel();
+        void    setLabelColor(ofColor color);
+        ofColor getLabelColor();
+        void    setLabelUpperCase(bool toUpper);
+        bool    getLabelUpperCase();
     
         void    setBackgroundColor(ofColor color);
         void    setBackgroundColorOnMouseOver(ofColor color);
@@ -55,6 +58,7 @@ class ofxDatGuiComponent : public ofxDatGuiInteractiveObject
         void    setBorder(ofColor color, int width);
         void    setBorderVisible(bool visible);
     
+        void    setMask(const ofRectangle &mask);
         void    setAnchor(ofxDatGuiAnchor anchor);
         void    setEnabled(bool visible);
         bool    getEnabled();
@@ -73,8 +77,7 @@ class ofxDatGuiComponent : public ofxDatGuiInteractiveObject
         virtual bool hitTest(ofPoint m);
 
         virtual void setPosition(int x, int y);
-        virtual void setParentPosition(int x, int y);
-        virtual void setTheme(ofxDatGuiTheme* theme) = 0;
+        virtual void setTheme(const ofxDatGuiTheme* theme) = 0;
         virtual void setWidth(int width, float labelWidth);
         virtual void setLabelAlignment(ofxDatGuiAlignment align);
     
@@ -108,11 +111,10 @@ class ofxDatGuiComponent : public ofxDatGuiInteractiveObject
         bool mEnabled;
         bool mMouseOver;
         bool mMouseDown;
+        ofRectangle mMask;
         ofxDatGuiType mType;
         ofxDatGuiAnchor mAnchor;
-        ofPoint mParentPosition;
         shared_ptr<ofxSmartFont> mFont;
-        static unique_ptr<ofxDatGuiTheme> theme;
     
         struct{
             float width;
@@ -142,6 +144,7 @@ class ofxDatGuiComponent : public ofxDatGuiInteractiveObject
         struct{
             int x;
             string text;
+            string rendered;
             bool visible;
             ofColor color;
             float width;
@@ -164,7 +167,11 @@ class ofxDatGuiComponent : public ofxDatGuiInteractiveObject
         void drawStripe();
         void drawBackground();
         void positionLabel();
-        void setComponentStyle(ofxDatGuiTheme* t);
+        void setComponentStyle(const ofxDatGuiTheme* t);
+    
+    private:
+    
+        static unique_ptr<ofxDatGuiTheme> theme;
     
 };
 

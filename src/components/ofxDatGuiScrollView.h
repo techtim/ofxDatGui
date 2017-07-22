@@ -31,8 +31,14 @@ class ofxDatGuiScrollView : public ofxDatGuiComponent {
         {
             mAutoHeight = true;
             mNumVisible = nVisible;
-            setTheme(ofxDatGuiComponent::theme.get());
+            setTheme(ofxDatGuiComponent::getTheme());
             ofAddListener(ofEvents().mouseScrolled, this, &ofxDatGuiScrollView::onMouseScrolled, OF_EVENT_ORDER_BEFORE_APP);
+        }
+    
+        ~ofxDatGuiScrollView()
+        {
+            mTheme = nullptr;
+            ofRemoveListener(ofEvents().mouseScrolled, this, &ofxDatGuiScrollView::onMouseScrolled, OF_EVENT_ORDER_BEFORE_APP);
         }
     
     /*
@@ -44,10 +50,10 @@ class ofxDatGuiScrollView : public ofxDatGuiComponent {
             int y = 0;
             if (children.size() > 0) y = children.back()->getY() + children.back()->getHeight() + mSpacing;
             children.push_back(new ofxDatGuiButton( label ));
+            children.back()->setMask(mRect);
             children.back()->setTheme(mTheme);
             children.back()->setWidth(mRect.width, 0);
             children.back()->setPosition(0, y);
-            children.back()->setParentPosition(mRect.x, mRect.y);
             children.back()->onButtonEvent(this, &ofxDatGuiScrollView::onButtonEvent);
         //  cout << "ofxDatGuiScrollView :: total items = " << children.size() << endl;
             if (mAutoHeight) autoSize();
@@ -158,7 +164,7 @@ class ofxDatGuiScrollView : public ofxDatGuiComponent {
         list presentation
     */
 
-        void setTheme(ofxDatGuiTheme* theme)
+        void setTheme(const ofxDatGuiTheme* theme)
         {
             mTheme = theme;
             mSpacing = theme->layout.vMargin;
@@ -178,14 +184,18 @@ class ofxDatGuiScrollView : public ofxDatGuiComponent {
         {
             mAutoHeight = false;
             mRect.height = height;
-            mView.allocate( mRect.width, mRect.height );
+            if (mRect.width > 0 && mRect.height > 0) mView.allocate( mRect.width, mRect.height );
         }
 
         void setPosition(int x, int y)
         {
             mRect.x = x;
             mRect.y = y;
-            for(auto i:children) i->setParentPosition(x, y);
+        }
+    
+        void setItemSpacing(int spacing)
+        {
+            mSpacing = spacing;
         }
     
         void setBackgroundColor(ofColor color)
@@ -230,7 +240,7 @@ class ofxDatGuiScrollView : public ofxDatGuiComponent {
         ofFbo mView;
         ofRectangle mRect;
         ofColor mBackground;
-        ofxDatGuiTheme* mTheme;
+        const ofxDatGuiTheme* mTheme;
     
         int mY;
         int mSpacing;
@@ -240,7 +250,7 @@ class ofxDatGuiScrollView : public ofxDatGuiComponent {
         void autoSize()
         {
             mRect.height = ((mTheme->layout.height + mSpacing) * mNumVisible) - mSpacing;
-            mView.allocate( mRect.width, mRect.height );
+            if (mRect.width > 0 && mRect.height > 0) mView.allocate( mRect.width, mRect.height );
         }
     
         void onMouseScrolled(ofMouseEventArgs &e)

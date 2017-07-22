@@ -36,9 +36,16 @@ class ofxDatGuiGroup : public ofxDatGuiButton {
 
     public:
     
-        ofxDatGuiGroup(string label) : ofxDatGuiButton(label)
+        ofxDatGuiGroup(string label) : ofxDatGuiButton(label), mHeight(0)
         {
             mIsExpanded = false;
+            layout();
+        }
+    
+        ~ofxDatGuiGroup()
+        {
+        // color pickers are deleted automatically when the group is destroyed //
+            for (auto i:children) if (i->getType() != ofxDatGuiType::COLOR_PICKER) delete i;
         }
     
         void setPosition(int x, int y)
@@ -157,10 +164,10 @@ class ofxDatGuiFolder : public ofxDatGuiGroup {
         // all items within a folder share the same stripe color //
             mStyle.stripe.color = color;
             mType = ofxDatGuiType::FOLDER;
-            setTheme(ofxDatGuiComponent::theme.get());
+            setTheme(ofxDatGuiComponent::getTheme());
         }
     
-        void setTheme(ofxDatGuiTheme* theme)
+        void setTheme(const ofxDatGuiTheme* theme)
         {
             setComponentStyle(theme);
             mIconOpen = theme->icon.groupOpen;
@@ -410,10 +417,10 @@ class ofxDatGuiDropdownOption : public ofxDatGuiButton {
         ofxDatGuiDropdownOption(string label) : ofxDatGuiButton(label)
         {
             mType = ofxDatGuiType::DROPDOWN_OPTION;
-            setTheme(ofxDatGuiComponent::theme.get());
+            setTheme(ofxDatGuiComponent::getTheme());
         }
     
-        void setTheme(ofxDatGuiTheme* theme)
+        void setTheme(const ofxDatGuiTheme* theme)
         {
             ofxDatGuiButton::setTheme(theme);
             mStyle.stripe.color = theme->stripe.dropdown;
@@ -437,11 +444,16 @@ class ofxDatGuiDropdown : public ofxDatGuiGroup {
         {
             mOption = 0;
             mType = ofxDatGuiType::DROPDOWN;
-            setDropdownList(options);
-            setTheme(ofxDatGuiComponent::theme.get());
+            for(int i=0; i<options.size(); i++){
+                ofxDatGuiDropdownOption* opt = new ofxDatGuiDropdownOption(options[i]);
+                opt->setIndex(children.size());
+                opt->onButtonEvent(this, &ofxDatGuiDropdown::onOptionSelected);
+                children.push_back(opt);
+            }
+            setTheme(ofxDatGuiComponent::getTheme());
         }
     
-        void setTheme(ofxDatGuiTheme* theme)
+        void setTheme(const ofxDatGuiTheme* theme)
         {
             setComponentStyle(theme);
             mIconOpen = theme->icon.groupOpen;

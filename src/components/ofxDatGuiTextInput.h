@@ -33,10 +33,10 @@ class ofxDatGuiTextInput : public ofxDatGuiComponent {
             mInput.setText(text);
             mInput.onInternalEvent(this, &ofxDatGuiTextInput::onInputChanged);
             mType = ofxDatGuiType::TEXT_INPUT;
-            setTheme(ofxDatGuiComponent::theme.get());
+            setTheme(ofxDatGuiComponent::getTheme());
         }
     
-        void setTheme(ofxDatGuiTheme* theme)
+        void setTheme(const ofxDatGuiTheme* theme)
         {
             setComponentStyle(theme);
             mStyle.stripe.color = theme->stripe.textInput;
@@ -57,14 +57,24 @@ class ofxDatGuiTextInput : public ofxDatGuiComponent {
             mInput.setPosition(x + mLabel.width, y + mStyle.padding);
         }
     
+        void setText(string text)
+        {
+            mInput.setText(text);
+        }
+    
         string getText()
         {
             return mInput.getText();
         }
     
-        void setText(string text)
+        void setTextUpperCase(bool toUpper)
         {
-            return mInput.setText(text);
+            mInput.setTextUpperCase(toUpper);
+        }
+    
+        bool getTextUpperCase()
+        {
+            return mInput.getTextUpperCase();
         }
     
         void setInputType(ofxDatGuiInputType type)

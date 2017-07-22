@@ -32,7 +32,7 @@ class ofxDatGuiColorPicker : public ofxDatGuiTextInput {
             mColor = color;
             mShowPicker = false;
             mType = ofxDatGuiType::COLOR_PICKER;
-            setTheme(ofxDatGuiComponent::theme.get());
+            setTheme(ofxDatGuiComponent::getTheme());
             
         // center the text input field //
             mInput.setTextInputFieldType(ofxDatGuiInputType::COLORPICKER);
@@ -59,7 +59,7 @@ class ofxDatGuiColorPicker : public ofxDatGuiTextInput {
             vbo.setColorData(&gColors[0], 6, GL_DYNAMIC_DRAW );
         }
     
-        void setTheme(ofxDatGuiTheme* theme)
+        void setTheme(const ofxDatGuiTheme* theme)
         {
             ofxDatGuiTextInput::setTheme(theme);
             mStyle.stripe.color = theme->stripe.colorPicker;
@@ -203,6 +203,8 @@ class ofxDatGuiColorPicker : public ofxDatGuiTextInput {
         {
             setColor(ofColor::fromHex(ofHexToInt(mInput.getText())));
         // set the input field text & background colors //
+            updateTextFieldColors();
+
         // update the gradient picker //
             gColors[2] = mColor;
             gColors[0] = ofColor(mColor.r/2, mColor.g/2, mColor.b/2);
@@ -224,11 +226,14 @@ class ofxDatGuiColorPicker : public ofxDatGuiTextInput {
             std::string res ( ss.str() );
             while(res.size() < 6) res+="0";
             mInput.setText(ofToUpper(res));
+
             mInput.setBackgroundColor(mColor);
-            mInput.setTextInactiveColor(mColor.getBrightness() < BRIGHTNESS_THRESHOLD ? ofColor::white : ofColor::black);
+
             if (mBoundColor != nullptr) {
                 *mBoundColor = mColor;
             }
+
+            updateTextFieldColors();
         }
     
     private:
@@ -250,7 +255,14 @@ class ofxDatGuiColorPicker : public ofxDatGuiTextInput {
         vector<ofVec2f> gPoints;
         vector<ofFloatColor> gColors;
     
-        static const int BRIGHTNESS_THRESHOLD = 185;
+        void updateTextFieldColors()
+        {
+            mInput.setBackgroundColor(mColor);
+        
+            //Counting the perceptive luminance - human eye favors green color...
+            double a = 1 - ( 0.299 * mColor.r + 0.587 * mColor.g + 0.114 * mColor.b)/255;
+            mInput.setTextInactiveColor(a < 0.5 ? ofColor::black : ofColor::white);
+        }
 
 };
 

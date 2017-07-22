@@ -153,10 +153,10 @@ class ofxDatGuiMatrix : public ofxDatGuiComponent {
             mNumButtons = numButtons;
             mShowLabels = showLabels;
             mType = ofxDatGuiType::MATRIX;
-            setTheme(ofxDatGuiComponent::theme.get());
+            setTheme(ofxDatGuiComponent::getTheme());
         }
     
-        void setTheme(ofxDatGuiTheme* theme)
+        void setTheme(const ofxDatGuiTheme* theme)
         {
             setComponentStyle(theme);
             mFillColor = theme->color.inputAreaBackground;

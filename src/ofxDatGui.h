@@ -32,7 +32,6 @@ class ofxDatGui : public ofxDatGuiInteractiveObject
         ofxDatGui(int x, int y);
         ofxDatGui(ofxDatGuiAnchor anchor = ofxDatGuiAnchor::TOP_LEFT);
         ~ofxDatGui();
-
         void draw();
         void update();
         void focus();
@@ -47,7 +46,7 @@ class ofxDatGui : public ofxDatGuiInteractiveObject
         void setOpacity(float opacity);
         void setPosition(int x, int y);
         void setPosition(ofxDatGuiAnchor anchor);
-        void setTheme(ofxDatGuiTheme* t);
+        void setTheme(ofxDatGuiTheme* t, bool applyImmediately = false);
         void setAutoDraw(bool autodraw, int priority = 0);
         void setLabelAlignment(ofxDatGuiAlignment align);
         static void setAssetPath(string path);
@@ -85,6 +84,7 @@ class ofxDatGui : public ofxDatGuiInteractiveObject
     
         ofxDatGuiHeader* getHeader();
         ofxDatGuiFooter* getFooter();
+        ofxDatGuiLabel* getLabel(string label, string folder = "");
         ofxDatGuiButton* getButton(string label, string folder = "");
         ofxDatGuiToggle* getToggle(string label, string folder = "");
         ofxDatGuiSlider* getSlider(string label, string folder = "");
@@ -99,7 +99,7 @@ class ofxDatGui : public ofxDatGuiInteractiveObject
     
     private:
     
-        int mGuid;
+        int mIndex;
         int mWidth;
         int mHeight;
         int mRowSpacing;
