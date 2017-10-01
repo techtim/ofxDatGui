@@ -191,6 +191,8 @@ class ofxDatGuiScrollView : public ofxDatGuiComponent {
         {
             mRect.x = x;
             mRect.y = y;
+            for(auto i:children)
+                i->setMask(mRect);
         }
     
         void setItemSpacing(int spacing)
@@ -209,7 +211,12 @@ class ofxDatGuiScrollView : public ofxDatGuiComponent {
     /*
         update & draw
     */
-
+    void sort() {
+        std::sort(children.begin(), children.end(), [](ofxDatGuiComponent* a, ofxDatGuiComponent *b) {
+            return ofToInt(a->getLabel()) < ofToInt(b->getLabel());
+        });
+    }
+    
         void update()
         {
             for(auto i:children) i->update();

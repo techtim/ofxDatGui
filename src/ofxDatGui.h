@@ -24,9 +24,8 @@
 #include "ofxDatGuiGroups.h"
 #include "ofxDatGuiControls.h"
 
-class ofxDatGui : public ofxDatGuiInteractiveObject
+class ofxDatGui : public enable_shared_from_this<ofxDatGui>, public ofxDatGuiInteractiveObject
 {
-    
     public:
     
         ofxDatGui(int x, int y);

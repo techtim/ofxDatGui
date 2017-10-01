@@ -152,7 +152,7 @@ void ofxDatGui::setTheme(ofxDatGuiTheme* t, bool applyImmediately)
 {
     if (applyImmediately){
         for(auto item:items) item->setTheme(t);
-    }   else{
+    } else {
     // apply on next update call //
         mTheme = t;
         mThemeChanged = true;
