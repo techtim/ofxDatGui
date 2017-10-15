@@ -25,11 +25,14 @@
 #include "ofxSmartFont.h"
 
 #define RETINA_MIN_WIDTH 2560
-#define RETINA_MIN_HEIGHT 1600
+#define RETINA_MIN_HEIGHT 1600	
 
 inline static bool ofxDatGuiIsRetina()
 {
-    return (ofGetScreenWidth() >= RETINA_MIN_WIDTH && ofGetScreenHeight() >= RETINA_MIN_HEIGHT);
+#ifdef TARGET_WIN32
+	return false;
+#endif
+	return (ofGetScreenWidth() >= RETINA_MIN_WIDTH && ofGetScreenHeight() >= RETINA_MIN_HEIGHT);
 }
 
 class ofxDatGuiTheme{
