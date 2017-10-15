@@ -21,7 +21,6 @@
 */
 
 #pragma once
-#if !defined(TARGET_RASPBERRY_PI)
 #include "ofxDatGuiComponent.h"
 
 class ofxDatGuiTimeGraph : public ofxDatGuiComponent {
@@ -73,6 +72,7 @@ class ofxDatGuiTimeGraph : public ofxDatGuiComponent {
 
         void draw()
         {
+#if !defined(TARGET_RASPBERRY_PI)
             if (!mVisible) return;
             ofPushStyle();
                 ofxDatGuiComponent::draw();
@@ -81,10 +81,12 @@ class ofxDatGuiTimeGraph : public ofxDatGuiComponent {
                 glColor3ub(mColor.fills.r, mColor.fills.g, mColor.fills.b);
                 (*this.*mDrawFunc)();
             ofPopStyle();
+#endif
         }
 
         void drawFilled()
         {
+#if !defined(TARGET_RASPBERRY_PI)
             float px = this->x + mPlotterRect.x;
             float py = this->y + mPlotterRect.y;
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -94,10 +96,12 @@ class ofxDatGuiTimeGraph : public ofxDatGuiComponent {
                 glVertex2f(px+ pt.x, py + pt.y);
             }
             glEnd();
+#endif
         }
 
         void drawOutline()
         {
+#if !defined(TARGET_RASPBERRY_PI)
             float px = this->x + mPlotterRect.x;
             float py = this->y + mPlotterRect.y;
             glLineWidth(mLineWeight);
@@ -106,20 +110,24 @@ class ofxDatGuiTimeGraph : public ofxDatGuiComponent {
             for (const auto &pt : pts) glVertex2f(px+pt.x, py+pt.y);
             glVertex2f(px, py+mPlotterRect.height);
             glEnd();
+#endif
         }
 
         void drawLines()
         {
+#if !defined(TARGET_RASPBERRY_PI)
             float px = this->x + mPlotterRect.x;
             float py = this->y + mPlotterRect.y;
             glLineWidth(mLineWeight);
             glBegin(GL_LINE_STRIP);
             for (const auto &pt : pts) glVertex2f(px+pt.x, py+pt.y);
             glEnd();
+#endif
         }
 
         void drawPoints()
         {
+#if !defined(TARGET_RASPBERRY_PI)
             float px = this->x + mPlotterRect.x;
             float py = this->y + mPlotterRect.y;
             glPointSize(mLineWeight);
@@ -127,6 +135,7 @@ class ofxDatGuiTimeGraph : public ofxDatGuiComponent {
             glBegin(GL_POINTS);
             for (const auto &pt : pts) glVertex2f(px+pt.x, py+pt.y);
             glEnd();
+#endif
         }
 
         void setPosition(int x, int y)
@@ -305,5 +314,3 @@ class ofxDatGuiValuePlotter : public ofxDatGuiTimeGraph {
         float mMax;
         float mSpeed;
 };
-
-#endif

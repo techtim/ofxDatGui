@@ -291,7 +291,7 @@ class ofxDatGuiScrollView : public ofxDatGuiComponent {
         void onButtonEvent(ofxDatGuiButtonEvent e)
         {
             if (scrollViewEventCallback != nullptr) {
-                int i = 0;
+                size_t i = 0;
                 for(; i<children.size(); ++i) if (children[i] == e.target) break;
                 ofxDatGuiScrollViewEvent e1(this, e.target, i);
                 scrollViewEventCallback(e1);
@@ -311,7 +311,7 @@ class ofxDatGuiScrollView : public ofxDatGuiComponent {
 
         bool isValidIndex(int index)
         {
-            return index >= 0 && index < children.size();
+            return index >= 0 && static_cast<unsigned int>(index) < children.size();
         }
 
 };

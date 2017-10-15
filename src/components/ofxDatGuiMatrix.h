@@ -281,7 +281,7 @@ class ofxDatGuiMatrix : public ofxDatGuiComponent {
     private:
 
         int mButtonSize;
-        int mNumButtons;
+        size_t mNumButtons;
         int mButtonPadding;
         bool mRadioMode;
         bool mShowLabels;
