@@ -26,17 +26,19 @@ bool ofxDatGuiLog::mQuiet = false;
 string ofxDatGuiTheme::AssetPath = "";
 std::unique_ptr<ofxDatGuiTheme> ofxDatGuiComponent::theme;
 
-ofxDatGuiComponent::ofxDatGuiComponent(string label)
+ofxDatGuiComponent::ofxDatGuiComponent(const string &label)
+: x(0)
+, y(0)
+, mName(label)
+, mVisible(true)
+, mEnabled(true)
+, mFocused(false)
+, mMouseOver(false)
+, mMouseDown(false)
+, mAnchor(ofxDatGuiAnchor::NO_ANCHOR)
 {
-    mName = label;
-    mVisible = true;
-    mEnabled = true;
-    mFocused = false;
-    mMouseOver = false;
-    mMouseDown = false;
     mStyle.opacity = 255;
     this->x = 0; this->y = 0;
-    mAnchor = ofxDatGuiAnchor::NO_ANCHOR;
     mLabel.text = label;
     mLabel.alignment = ofxDatGuiAlignment::LEFT;
 }
@@ -113,7 +115,7 @@ void ofxDatGuiComponent::setComponentStyle(const ofxDatGuiTheme* theme)
     mLabel.forceUpperCase = theme->layout.upperCaseLabels;
     setLabel(mLabel.text);
     setWidth(theme->layout.width, theme->layout.labelWidth);
-    for (int i=0; i<children.size(); i++) children[i]->setTheme(theme);
+    for (auto &child : children) child->setTheme(theme);
 }
 
 void ofxDatGuiComponent::setWidth(int width, float labelWidth)
@@ -128,7 +130,7 @@ void ofxDatGuiComponent::setWidth(int width, float labelWidth)
     }
     mIcon.x = mStyle.width - (mStyle.width * .05) - mIcon.size;
     mLabel.rightAlignedXpos = mLabel.width - mLabel.margin;
-    for (int i=0; i<children.size(); i++) children[i]->setWidth(width, labelWidth);
+    for (auto &child : children) child->setWidth(width, labelWidth);
     positionLabel();
 }
 
@@ -156,7 +158,7 @@ void ofxDatGuiComponent::setPosition(int x, int y)
 {
     this->x = x;
     this->y = y;
-    for(int i=0; i<children.size(); i++) children[i]->setPosition(x, this->y + (mStyle.height+mStyle.vMargin)*(i+1));
+    for(size_t i=0; i<children.size(); ++i) children[i]->setPosition(x, this->y + (mStyle.height+mStyle.vMargin)*(i+1));
 }
 
 void ofxDatGuiComponent::setVisible(bool visible)
@@ -176,7 +178,7 @@ bool ofxDatGuiComponent::getVisible()
 void ofxDatGuiComponent::setOpacity(float opacity)
 {
     mStyle.opacity = opacity * 255;
-    for (int i=0; i<children.size(); i++) children[i]->setOpacity(opacity);
+    for (auto &child : children) child->setOpacity(opacity);
 }
 
 void ofxDatGuiComponent::setEnabled(bool enabled)
@@ -270,7 +272,7 @@ bool ofxDatGuiComponent::getLabelUpperCase()
 void ofxDatGuiComponent::setLabelAlignment(ofxDatGuiAlignment align)
 {
     mLabel.alignment = align;
-    for (int i=0; i<children.size(); i++) children[i]->setLabelAlignment(align);
+    for (auto &child : children) child->setLabelAlignment(align);
     positionLabel();
 }
 
@@ -380,7 +382,7 @@ void ofxDatGuiComponent::update(bool acceptEvents)
     }
 // don't update children unless they're visible //
     if (this->getIsExpanded()) {
-        for(int i=0; i<children.size(); i++) {
+        for(size_t i=0; i<children.size(); ++i) {
             children[i]->update(acceptEvents);
             if (children[i]->getFocused()){
                 if (acceptEvents == false ) children[i]->setFocused(false);

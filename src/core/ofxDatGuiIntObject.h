@@ -65,25 +65,35 @@ inline static float ofxDatGuiScale(float val, float min, float max)
 class ofxDatGuiInteractiveObject{
 
     public:
-
+        ofxDatGuiInteractiveObject()
+        : buttonEventCallback(nullptr)
+        , toggleEventCallback(nullptr)
+        , sliderEventCallback(nullptr)
+        , textInputEventCallback(nullptr)
+        , colorPickerEventCallback(nullptr)
+        , dropdownEventCallback(nullptr)
+        , pad2dEventCallback(nullptr)
+        , matrixEventCallback(nullptr)
+        , internalEventCallback(nullptr)
+        {}
     // button events //
         typedef std::function<void(ofxDatGuiButtonEvent)> onButtonEventCallback;
         onButtonEventCallback buttonEventCallback;
-    
+
         template<typename T, typename args, class ListenerClass>
         void onButtonEvent(T* owner, void (ListenerClass::*listenerMethod)(args))
         {
             buttonEventCallback = std::bind(listenerMethod, owner, std::placeholders::_1);
         }
-    
+
         void onButtonEvent(onButtonEventCallback callback) {
             buttonEventCallback = callback;
         }
-    
+
     // toggle events //
         typedef std::function<void(ofxDatGuiToggleEvent)> onToggleEventCallback;
         onToggleEventCallback toggleEventCallback;
-    
+
         template<typename T, typename args, class ListenerClass>
         void onToggleEvent(T* owner, void (ListenerClass::*listenerMethod)(args))
         {
@@ -93,17 +103,17 @@ class ofxDatGuiInteractiveObject{
         void onToggleEvent(onToggleEventCallback callback) {
             toggleEventCallback = callback;
         }
-    
+
     // slider events //
         typedef std::function<void(ofxDatGuiSliderEvent)> onSliderEventCallback;
         onSliderEventCallback sliderEventCallback;
-    
+
         template<typename T, typename args, class ListenerClass>
         void onSliderEvent(T* owner, void (ListenerClass::*listenerMethod)(args))
         {
             sliderEventCallback = std::bind(listenerMethod, owner, std::placeholders::_1);
         }
-    
+
         void onSliderEvent(onSliderEventCallback callback) {
             sliderEventCallback = callback;
         }
@@ -111,13 +121,13 @@ class ofxDatGuiInteractiveObject{
     // text input events //
         typedef std::function<void(ofxDatGuiTextInputEvent)> onTextInputEventCallback;
         onTextInputEventCallback textInputEventCallback;
-    
+
         template<typename T, typename args, class ListenerClass>
         void onTextInputEvent(T* owner, void (ListenerClass::*listenerMethod)(args))
         {
             textInputEventCallback = std::bind(listenerMethod, owner, std::placeholders::_1);
         }
-    
+
         void onTextInputEvent(onTextInputEventCallback callback) {
             textInputEventCallback = callback;
         }
@@ -125,27 +135,27 @@ class ofxDatGuiInteractiveObject{
     // color picker events //
         typedef std::function<void(ofxDatGuiColorPickerEvent)> onColorPickerEventCallback;
         onColorPickerEventCallback colorPickerEventCallback;
-    
+
         template<typename T, typename args, class ListenerClass>
         void onColorPickerEvent(T* owner, void (ListenerClass::*listenerMethod)(args))
         {
             colorPickerEventCallback = std::bind(listenerMethod, owner, std::placeholders::_1);
         }
-    
+
         void onColorPickerEvent(onColorPickerEventCallback callback) {
             colorPickerEventCallback = callback;
         }
-    
+
     // dropdown events //
         typedef std::function<void(ofxDatGuiDropdownEvent)> onDropdownEventCallback;
         onDropdownEventCallback dropdownEventCallback;
-    
+
         template<typename T, typename args, class ListenerClass>
         void onDropdownEvent(T* owner, void (ListenerClass::*listenerMethod)(args))
         {
             dropdownEventCallback = std::bind(listenerMethod, owner, std::placeholders::_1);
         }
-    
+
         void onDropdownEvent(onDropdownEventCallback callback) {
             dropdownEventCallback = callback;
         }
@@ -153,13 +163,13 @@ class ofxDatGuiInteractiveObject{
     // 2d pad events //
         typedef std::function<void(ofxDatGui2dPadEvent)> on2dPadEventCallback;
         on2dPadEventCallback pad2dEventCallback;
-    
+
         template<typename T, typename args, class ListenerClass>
         void on2dPadEvent(T* owner, void (ListenerClass::*listenerMethod)(args))
         {
             pad2dEventCallback = std::bind(listenerMethod, owner, std::placeholders::_1);
         }
-    
+
         void on2dPadEvent(on2dPadEventCallback callback) {
             pad2dEventCallback = callback;
         }
@@ -167,13 +177,13 @@ class ofxDatGuiInteractiveObject{
     // matrix events //
         typedef std::function<void(ofxDatGuiMatrixEvent)> onMatrixEventCallback;
         onMatrixEventCallback matrixEventCallback;
-    
+
         template<typename T, typename args, class ListenerClass>
         void onMatrixEvent(T* owner, void (ListenerClass::*listenerMethod)(args))
         {
             matrixEventCallback = std::bind(listenerMethod, owner, std::placeholders::_1);
         }
-    
+
         void onMatrixEvent(onMatrixEventCallback callback) {
             matrixEventCallback = callback;
         }
@@ -181,7 +191,7 @@ class ofxDatGuiInteractiveObject{
     // scrollview events //
         typedef std::function<void(ofxDatGuiScrollViewEvent)> onScrollViewEventCallback;
         onScrollViewEventCallback scrollViewEventCallback;
-    
+
         template<typename T, typename args, class ListenerClass>
         void onScrollViewEvent(T* owner, void (ListenerClass::*listenerMethod)(args))
         {
@@ -195,7 +205,7 @@ class ofxDatGuiInteractiveObject{
     // internal events //
         typedef std::function<void(ofxDatGuiInternalEvent)> onInternalEventCallback;
         onInternalEventCallback internalEventCallback;
-        
+
         template<typename T, typename args, class ListenerClass>
         void onInternalEvent(T* owner, void (ListenerClass::*listenerMethod)(args))
         {

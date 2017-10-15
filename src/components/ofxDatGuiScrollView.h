@@ -26,7 +26,7 @@
 class ofxDatGuiScrollView : public ofxDatGuiComponent {
 
     public:
-    
+
         ofxDatGuiScrollView(string name, int nVisible = 6) : ofxDatGuiComponent(name)
         {
             mAutoHeight = true;
@@ -34,17 +34,17 @@ class ofxDatGuiScrollView : public ofxDatGuiComponent {
             setTheme(ofxDatGuiComponent::getTheme());
             ofAddListener(ofEvents().mouseScrolled, this, &ofxDatGuiScrollView::onMouseScrolled, OF_EVENT_ORDER_BEFORE_APP);
         }
-    
+
         ~ofxDatGuiScrollView()
         {
             mTheme = nullptr;
             ofRemoveListener(ofEvents().mouseScrolled, this, &ofxDatGuiScrollView::onMouseScrolled, OF_EVENT_ORDER_BEFORE_APP);
         }
-    
+
     /*
         list manipulation
     */
-    
+
         void add(string label)
         {
             int y = 0;
@@ -58,18 +58,18 @@ class ofxDatGuiScrollView : public ofxDatGuiComponent {
         //  cout << "ofxDatGuiScrollView :: total items = " << children.size() << endl;
             if (mAutoHeight) autoSize();
         }
-    
+
         ofxDatGuiButton* get(int index)
         {
             return static_cast<ofxDatGuiButton*>(children[index]);
         }
-    
+
         ofxDatGuiButton* get(string name)
         {
             for(auto i:children) if (i->is(name)) return static_cast<ofxDatGuiButton*>(i);
             return nullptr;
         }
-    
+
         void swap(int index1, int index2)
         {
             if (isValidIndex(index1) && isValidIndex(index2) && index1 != index2){
@@ -77,7 +77,7 @@ class ofxDatGuiScrollView : public ofxDatGuiComponent {
                 positionItems();
             }
         }
-    
+
         void move(int from, int to)
         {
             if (isValidIndex(from) && isValidIndex(to) && from != to){
@@ -95,22 +95,22 @@ class ofxDatGuiScrollView : public ofxDatGuiComponent {
                 cout << "invalid move operation, check your indices" << endl;
             }
         }
-    
+
         void move(ofxDatGuiComponent* item, int index)
         {
-            for(int i=0; i<children.size(); i++){
+            for(size_t i=0; i<children.size(); ++i){
                 if (children[i] == item) {
                     move(i, index); return;
                 }
             }
         }
-    
+
         void clear()
         {
             for (auto i:children) delete i;
             children.clear();
         }
-    
+
         void remove(int index)
         {
             if (isValidIndex(index)) {
@@ -119,10 +119,10 @@ class ofxDatGuiScrollView : public ofxDatGuiComponent {
             }
             positionItems();
         }
-    
+
         void remove(ofxDatGuiComponent* item)
         {
-            for(int i=0; i<children.size(); i++){
+            for(size_t i=0; i<children.size(); ++i){
                 if (children[i] == item) {
                     delete children[i];
                     children.erase(children.begin()+i);
@@ -130,16 +130,16 @@ class ofxDatGuiScrollView : public ofxDatGuiComponent {
                 }
             }
         }
-   
+
     /*
         temporary getters until mRect is implemented in ofxDatGuiComponent
     */
-    
+
         int getX()
         {
             return mRect.x;
         }
-    
+
         int getY()
         {
             return mRect.y;
@@ -149,17 +149,17 @@ class ofxDatGuiScrollView : public ofxDatGuiComponent {
         {
             return mRect.width;
         }
-    
+
         int getHeight()
         {
             return mRect.height;
         }
-    
+
         int getNumItems()
         {
             return children.size();
         }
-    
+
     /*
         list presentation
     */
@@ -172,14 +172,14 @@ class ofxDatGuiScrollView : public ofxDatGuiComponent {
             for (auto i:children) i->setTheme(theme);
             setWidth(theme->layout.width, theme->layout.labelWidth);
         }
-    
+
         void setWidth(int width, float labelWidth = 1)
         {
             mRect.width = width;
             for (auto i:children) i->setWidth(mRect.width, labelWidth);
             if (mAutoHeight) autoSize();
         }
-    
+
         void setHeight(int height)
         {
             mAutoHeight = false;
@@ -194,17 +194,17 @@ class ofxDatGuiScrollView : public ofxDatGuiComponent {
             for(auto i:children)
                 i->setMask(mRect);
         }
-    
+
         void setItemSpacing(int spacing)
         {
             mSpacing = spacing;
         }
-    
+
         void setBackgroundColor(ofColor color)
         {
             mBackground = color;
         }
-    
+
         void setNumVisible(int num) {
             mNumVisible = num;
         }
@@ -216,12 +216,12 @@ class ofxDatGuiScrollView : public ofxDatGuiComponent {
             return ofToInt(a->getLabel()) < ofToInt(b->getLabel());
         });
     }
-    
+
         void update()
         {
             for(auto i:children) i->update();
         }
-    
+
         void draw()
         {
             ofPushStyle();
@@ -243,23 +243,23 @@ class ofxDatGuiScrollView : public ofxDatGuiComponent {
         }
 
     private:
-    
+
         ofFbo mView;
         ofRectangle mRect;
         ofColor mBackground;
         const ofxDatGuiTheme* mTheme;
-    
+
         int mY;
         int mSpacing;
         int mNumVisible;
         bool mAutoHeight;
-    
+
         void autoSize()
         {
             mRect.height = ((mTheme->layout.height + mSpacing) * mNumVisible) - mSpacing;
             if (mRect.width > 0 && mRect.height > 0) mView.allocate( mRect.width, mRect.height );
         }
-    
+
         void onMouseScrolled(ofMouseEventArgs &e)
         {
             if (children.size() > 0 && mRect.inside(e.x, e.y) == true){
@@ -283,23 +283,23 @@ class ofxDatGuiScrollView : public ofxDatGuiComponent {
                 }
                 if (allowScroll){
                     children.front()->setPosition(0, mY);
-                    for(int i=0; i<children.size(); i++) children[i]->setPosition(0, mY + (btnH * i));
+                    for(size_t i=0; i<children.size(); ++i) children[i]->setPosition(0, mY + (btnH * i));
                 }
             }
         }
-    
+
         void onButtonEvent(ofxDatGuiButtonEvent e)
         {
             if (scrollViewEventCallback != nullptr) {
                 int i = 0;
-                for(i; i<children.size(); i++) if (children[i] == e.target) break;
+                for(; i<children.size(); ++i) if (children[i] == e.target) break;
                 ofxDatGuiScrollViewEvent e1(this, e.target, i);
                 scrollViewEventCallback(e1);
             }   else{
                 ofxDatGuiLog::write(ofxDatGuiMsg::EVENT_HANDLER_NULL);
             }
         }
-    
+
         void positionItems()
         {
             int y = mY;
@@ -308,7 +308,7 @@ class ofxDatGuiScrollView : public ofxDatGuiComponent {
                 y = i->getY() + i->getHeight() + mSpacing;
             }
         }
-    
+
         bool isValidIndex(int index)
         {
             return index >= 0 && index < children.size();

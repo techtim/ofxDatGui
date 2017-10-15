@@ -27,7 +27,7 @@ class ofxDatGuiComponent : public ofxDatGuiInteractiveObject
 {
     public:
     
-        ofxDatGuiComponent(string label);
+        ofxDatGuiComponent(const string &label);
         virtual ~ofxDatGuiComponent();
     
         int     getX();

@@ -23,10 +23,30 @@
 #pragma once
 #include "ofxDatGuiComponent.h"
 
+#ifdef TARGET_WIN32
+    #if (_MSC_VER)
+        #define GLUT_BUILDING_LIB
+        #include "glut.h"
+    #else
+        #include <GL/glut.h>
+        #include <GL/freeglut_ext.h>
+    #endif
+#endif
+#ifdef TARGET_OSX
+    #include <OpenGL/OpenGL.h>
+    #include "../../../libs/glut/lib/osx/GLUT.framework/Versions/A/Headers/glut.h"
+#endif
+#ifdef TARGET_LINUX
+    #include <GL/glut.h>
+    #include <GL/freeglut_ext.h>
+    #include <GL/glx.h>
+#endif
+
+
 class ofxDatGuiTimeGraph : public ofxDatGuiComponent {
 
     public:
-    
+
         void setDrawMode(ofxDatGuiGraph gMode)
         {
             switch (gMode) {
@@ -42,13 +62,13 @@ class ofxDatGuiTimeGraph : public ofxDatGuiComponent {
         }
 
     protected:
-    
+
         ofxDatGuiTimeGraph(string label) : ofxDatGuiComponent(label)
         {
             mDrawFunc = &ofxDatGuiTimeGraph::drawFilled;
             setTheme(ofxDatGuiComponent::getTheme());
         }
-    
+
         void setTheme(const ofxDatGuiTheme* theme)
         {
             setComponentStyle(theme);
@@ -60,7 +80,7 @@ class ofxDatGuiTimeGraph : public ofxDatGuiComponent {
             mLineWeight = theme->layout.graph.lineWeight;
             setWidth(theme->layout.width, theme->layout.labelWidth);
         }
-    
+
         void setWidth(int width, float labelWidth)
         {
             ofxDatGuiComponent::setWidth(width, labelWidth);
@@ -69,7 +89,7 @@ class ofxDatGuiTimeGraph : public ofxDatGuiComponent {
             mPlotterRect.width = mStyle.width - mStyle.padding - mLabel.width;
             mPlotterRect.height = mStyle.height - (mStyle.padding*2);
         }
-    
+
         void draw()
         {
             if (!mVisible) return;
@@ -81,16 +101,16 @@ class ofxDatGuiTimeGraph : public ofxDatGuiComponent {
                 (*this.*mDrawFunc)();
             ofPopStyle();
         }
-    
+
         void drawFilled()
         {
             float px = this->x + mPlotterRect.x;
             float py = this->y + mPlotterRect.y;
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
             glBegin(GL_TRIANGLE_STRIP);
-            for (int i=0; i<pts.size(); i++) {
-                glVertex2f(px+ pts[i].x, py + mPlotterRect.height);
-                glVertex2f(px+ pts[i].x, py + pts[i].y);
+            for (const auto &pt : pts) {
+                glVertex2f(px+ pt.x, py + mPlotterRect.height);
+                glVertex2f(px+ pt.x, py + pt.y);
             }
             glEnd();
         }
@@ -102,21 +122,21 @@ class ofxDatGuiTimeGraph : public ofxDatGuiComponent {
             glLineWidth(mLineWeight);
             glBegin(GL_LINE_LOOP);
             glVertex2f(px+mPlotterRect.width, py+mPlotterRect.height);
-            for (int i=0; i<pts.size(); i++) glVertex2f(px+pts[i].x, py+pts[i].y);
+            for (const auto &pt : pts) glVertex2f(px+pt.x, py+pt.y);
             glVertex2f(px, py+mPlotterRect.height);
             glEnd();
         }
-    
+
         void drawLines()
         {
             float px = this->x + mPlotterRect.x;
             float py = this->y + mPlotterRect.y;
             glLineWidth(mLineWeight);
             glBegin(GL_LINE_STRIP);
-            for (int i=0; i<pts.size(); i++) glVertex2f(px+pts[i].x, py+pts[i].y);
+            for (const auto &pt : pts) glVertex2f(px+pt.x, py+pt.y);
             glEnd();
         }
-    
+
         void drawPoints()
         {
             float px = this->x + mPlotterRect.x;
@@ -124,10 +144,10 @@ class ofxDatGuiTimeGraph : public ofxDatGuiComponent {
             glPointSize(mLineWeight);
             glLineWidth(mLineWeight);
             glBegin(GL_POINTS);
-            for (int i=0; i<pts.size(); i++) glVertex2f(px+pts[i].x, py+pts[i].y);
+            for (const auto &pt : pts) glVertex2f(px+pt.x, py+pt.y);
             glEnd();
         }
-    
+
         void setPosition(int x, int y)
         {
             ofxDatGuiComponent::setPosition(x, y);
@@ -156,12 +176,12 @@ class ofxDatGuiWaveMonitor : public ofxDatGuiTimeGraph {
             mType = ofxDatGuiType::WAVE_MONITOR;
             setTheme(ofxDatGuiComponent::getTheme());
         }
-    
+
         static ofxDatGuiWaveMonitor* getInstance()
         {
             return new ofxDatGuiWaveMonitor("X", 0, 0);
         }
-    
+
     // amplitude is a multiplier that affect the vertical height of the wave and should be a value between 0 & 1 //
         void setAmplitude(float amp)
         {
@@ -173,32 +193,32 @@ class ofxDatGuiWaveMonitor : public ofxDatGuiTimeGraph {
             }
             graph();
         }
-    
+
    // frequency is a percentage of the limit to ensure the value is always in range //
         void setFrequency(float freq)
         {
             mFrequency = (freq/mFrequencyLimit)*100.0f;
             graph();
         }
-    
+
         void setFrequencyLimit(float limit)
         {
             mFrequencyLimit = limit;
             setFrequency(mFrequency);
         }
-    
+
         void setTheme(const ofxDatGuiTheme* tmplt)
         {
             ofxDatGuiTimeGraph::setTheme(tmplt);
             graph();
         }
-    
+
         void setWidth(int width, float labelWidth)
         {
             ofxDatGuiTimeGraph::setWidth(width, labelWidth);
             graph();
         }
-    
+
         void graph()
         {
             pts.clear();
@@ -209,13 +229,13 @@ class ofxDatGuiWaveMonitor : public ofxDatGuiTimeGraph {
                 pts.push_back(ofVec2f(i, yp));
             }
         }
-    
+
         void update(bool ignoreMouseEvents)
         {
             pts[0].y = pts[pts.size()-1].y;
             for (int i=mPlotterRect.width-1; i>0; i--) pts[i].y = pts[i-1].y;
         }
-    
+
     private:
         float mAmplitude;
         float mFrequency;
@@ -234,19 +254,19 @@ class ofxDatGuiValuePlotter : public ofxDatGuiTimeGraph {
             setRange(min, max);
             mType = ofxDatGuiType::VALUE_PLOTTER;
         }
-    
+
         static ofxDatGuiValuePlotter* getInstance()
         {
             return new ofxDatGuiValuePlotter("X", 0, 0);
         }
-    
+
         void setRange(float min, float max)
         {
             mMin = min;
             mMax = max;
             setValue((max+min)/2);
         }
-    
+
         void setSpeed(float speed)
         {
             if (speed != mSpeed){
@@ -264,27 +284,27 @@ class ofxDatGuiValuePlotter : public ofxDatGuiTimeGraph {
                 mVal = mMin;
             }
         }
-    
+
         float getMin()
         {
             return mMin;
         }
-    
+
         float getMax()
         {
             return mMax;
         }
-    
+
         float getRange()
         {
             return mMax-mMin;
         }
-    
+
         void update(bool ignoreMouseEvents)
         {
         // shift all points over before adding new value //
-            for (int i=0; i<pts.size(); i++) pts[i].x -= mSpeed;
-            int i = 0;
+            for (auto &pt : pts) pt.x -= mSpeed;
+            size_t i = 0;
             while(i < pts.size())
             {
                 if (pts.at(i).x <= 0) {
@@ -292,12 +312,12 @@ class ofxDatGuiValuePlotter : public ofxDatGuiTimeGraph {
                 } else if (pts.at(i).x <= mSpeed) {
                     pts.at(i).x = mLineWeight / 2;
                 }
-                i++;
+                ++i;
             }
             float height = mPlotterRect.height - (mPlotterRect.height * ofxDatGuiScale(mVal, mMin, mMax));
             pts.insert(pts.begin(), ofVec2f(mPlotterRect.width, height));
         }
-    
+
     private:
         float mVal;
         float mMin;

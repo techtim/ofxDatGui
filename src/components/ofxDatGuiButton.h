@@ -27,7 +27,7 @@ class ofxDatGuiButton : public ofxDatGuiComponent {
 
     public:
     
-        ofxDatGuiButton(string label) : ofxDatGuiComponent(label)
+        ofxDatGuiButton(const string &label) : ofxDatGuiComponent(label)
         {
             mType = ofxDatGuiType::BUTTON;
             setTheme(ofxDatGuiComponent::getTheme());

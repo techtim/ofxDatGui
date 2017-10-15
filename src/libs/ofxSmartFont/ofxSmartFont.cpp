@@ -80,7 +80,7 @@ float ofxSmartFont::getLineHeight()
 
 shared_ptr<ofxSmartFont> ofxSmartFont::add(string file, int size, string name)
 {
-    for(auto f:mFonts){
+    for(const auto &f:mFonts){
         if (f->file()==file && f->size()==size){
            // log(f->name() + "@ pt size "+std::to_string(f->size()) + " is already in memory.");
             return f;
@@ -95,7 +95,7 @@ shared_ptr<ofxSmartFont> ofxSmartFont::add(string file, int size, string name)
 
 shared_ptr<ofxSmartFont> ofxSmartFont::get(string name)
 {
-    for(auto f:mFonts){
+    for(const auto &f:mFonts){
         if (f->name()==name) return f;
     }
     log("requested font : "+ name + " not found");
@@ -104,7 +104,7 @@ shared_ptr<ofxSmartFont> ofxSmartFont::get(string name)
 
 shared_ptr<ofxSmartFont> ofxSmartFont::get(string name, int size)
 {
-    for(auto f:mFonts){
+    for(const auto &f:mFonts){
         if (f->file().find(name) != std::string::npos && f->size()==size){
             return f;
         }
@@ -115,7 +115,7 @@ shared_ptr<ofxSmartFont> ofxSmartFont::get(string name, int size)
 
 shared_ptr<ofxSmartFont> ofxSmartFont::get(vector<string> keys, int size)
 {
-    for(auto f:mFonts){
+    for(const auto &f:mFonts){
         bool match = true;
         for(auto k:keys){
             if (ofToLower(f->file()).find(ofToLower(k)) == std::string::npos) match = false;
@@ -123,7 +123,7 @@ shared_ptr<ofxSmartFont> ofxSmartFont::get(vector<string> keys, int size)
         if (match && f->size()==size) return f;
     }
     std::stringstream ss;
-    for(int i=0; i<keys.size(); i++){
+    for(size_t i=0; i<keys.size(); ++i){
         ss << keys[i];
         if (i<keys.size()-1) ss << ",";
     }
@@ -135,7 +135,7 @@ void ofxSmartFont::list()
 {
     log("----------------------------------");
     log("total # of fonts cached = " + std::to_string(mFonts.size()));
-    for(auto f:mFonts){
+    for(const auto &f:mFonts){
         log(f->name() + " (" + std::to_string(f->size()) +"pt -> "+f->file()+")");
     }
     log("----------------------------------");
