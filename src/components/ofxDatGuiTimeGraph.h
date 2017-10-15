@@ -21,27 +21,8 @@
 */
 
 #pragma once
+#if !defined(TARGET_RASPBERRY_PI)
 #include "ofxDatGuiComponent.h"
-
-#ifdef TARGET_WIN32
-    #if (_MSC_VER)
-        #define GLUT_BUILDING_LIB
-        #include "glut.h"
-    #else
-        #include <GL/glut.h>
-        #include <GL/freeglut_ext.h>
-    #endif
-#endif
-#ifdef TARGET_OSX
-    #include <OpenGL/OpenGL.h>
-    #include "../../../libs/glut/lib/osx/GLUT.framework/Versions/A/Headers/glut.h"
-#endif
-#ifdef TARGET_LINUX
-    #include <GL/glut.h>
-    #include <GL/freeglut_ext.h>
-    #include <GL/glx.h>
-#endif
-
 
 class ofxDatGuiTimeGraph : public ofxDatGuiComponent {
 
@@ -325,6 +306,4 @@ class ofxDatGuiValuePlotter : public ofxDatGuiTimeGraph {
         float mSpeed;
 };
 
-
-
-
+#endif
