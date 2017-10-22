@@ -255,12 +255,13 @@ class ofxDatGuiMatrix : public ofxDatGuiComponent {
 
         void onButtonSelected(ofxDatGuiInternalEvent e)
         {
+            size_t index = static_cast<size_t>(e.index);
             if (mRadioMode) {
         // deselect all buttons save the one that was selected //
-                for(size_t i=0; i<btns.size(); ++i) btns[i].setSelected(e.index == i);
+                for(size_t i=0; i<btns.size(); ++i) btns[i].setSelected(index == i);
             }
             if (matrixEventCallback != nullptr) {
-                ofxDatGuiMatrixEvent ev(this, e.index, btns[e.index].getSelected());
+                ofxDatGuiMatrixEvent ev(this, index, btns[index].getSelected());
                 matrixEventCallback(ev);
             }   else{
                 ofxDatGuiLog::write(ofxDatGuiMsg::EVENT_HANDLER_NULL);

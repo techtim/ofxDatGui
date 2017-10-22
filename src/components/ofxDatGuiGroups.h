@@ -479,7 +479,7 @@ class ofxDatGuiDropdown : public ofxDatGuiGroup {
         void select(int cIndex)
         {
         // ensure value is in range //
-            if (cIndex < 0 || cIndex >= children.size()){
+            if (cIndex < 0 || cIndex >= static_cast<int>(children.size())){
                 ofLogError() << "ofxDatGuiDropdown->select("<<cIndex<<") is out of range";
             }   else{
                 setLabel(children[cIndex]->getLabel());

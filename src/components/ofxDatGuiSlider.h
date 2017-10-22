@@ -312,7 +312,7 @@ class ofxDatGuiSlider : public ofxDatGuiComponent {
         float   mMax;
         double  mValue;
         double  mScale;
-        int     mPrecision;
+        unsigned int mPrecision;
         bool    mTruncateValue;
         int     mInputX;
         int     mInputWidth;
