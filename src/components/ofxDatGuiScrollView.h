@@ -27,10 +27,12 @@ class ofxDatGuiScrollView : public ofxDatGuiComponent {
 
     public:
 
-        ofxDatGuiScrollView(string name, int nVisible = 6) : ofxDatGuiComponent(name)
+        ofxDatGuiScrollView(string name, int nVisible = 6)
+        : ofxDatGuiComponent(name)
+        , mY(0)
+        , mAutoHeight(true)
+        , mNumVisible(nVisible)
         {
-            mAutoHeight = true;
-            mNumVisible = nVisible;
             setTheme(ofxDatGuiComponent::getTheme());
             ofAddListener(ofEvents().mouseScrolled, this, &ofxDatGuiScrollView::onMouseScrolled, OF_EVENT_ORDER_BEFORE_APP);
         }
