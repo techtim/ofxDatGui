@@ -29,11 +29,11 @@ class ofxDatGuiScrollView : public ofxDatGuiComponent {
 
         ofxDatGuiScrollView(string name, int nVisible = 6)
         : ofxDatGuiComponent(name)
+        , mTheme(nullptr)
         , mY(0)
-        , mAutoHeight(true)
         , mNumVisible(nVisible)
+        , mAutoHeight(true)
         {
-            setTheme(ofxDatGuiComponent::getTheme());
             ofAddListener(ofEvents().mouseScrolled, this, &ofxDatGuiScrollView::onMouseScrolled, OF_EVENT_ORDER_BEFORE_APP);
         }
 
@@ -49,6 +49,9 @@ class ofxDatGuiScrollView : public ofxDatGuiComponent {
 
         void add(string label)
         {
+            if (mTheme == nullptr)
+                throw "set theme first";
+
             int y = 0;
             if (children.size() > 0) y = children.back()->getY() + children.back()->getHeight() + mSpacing;
             children.push_back(new ofxDatGuiButton( label ));
@@ -258,6 +261,8 @@ class ofxDatGuiScrollView : public ofxDatGuiComponent {
 
         void autoSize()
         {
+            if (mTheme == nullptr)
+                return;
             mRect.height = ((mTheme->layout.height + mSpacing) * mNumVisible) - mSpacing;
             if (mRect.width > 0 && mRect.height > 0) mView.allocate( mRect.width, mRect.height );
         }
