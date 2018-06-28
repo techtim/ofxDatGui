@@ -166,12 +166,14 @@ class ofxDatGuiSlider : public ofxDatGuiComponent {
         {
             mBoundi = &val;
             mBoundf = nullptr;
+            setPrecision(0);
         }
     
         void bind(float &val)
         {
             mBoundf = &val;
             mBoundi = nullptr;
+            setPrecision(2);
         }
 
         void bind(int &val, int min, int max)

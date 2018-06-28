@@ -21,7 +21,7 @@
 */
 
 #pragma once
-#include "ofxDatGuiComponent.h"
+#include "ofxDatGuiButton.h"
 
 class ofxDatGuiButton : public ofxDatGuiComponent {
 

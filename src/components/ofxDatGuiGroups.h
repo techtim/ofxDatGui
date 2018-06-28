@@ -23,6 +23,7 @@
 #pragma once
 #include "ofxDatGuiLabel.h"
 #include "ofxDatGuiButton.h"
+#include "ofxDatGuiButtonImage.h"
 #include "ofxDatGuiSlider.h"
 #include "ofxDatGuiTextInput.h"
 #include "ofxDatGuiFRM.h"
@@ -36,9 +37,8 @@ class ofxDatGuiGroup : public ofxDatGuiButton {
 
     public:
 
-        ofxDatGuiGroup(string label) : ofxDatGuiButton(label), mHeight(0)
+        ofxDatGuiGroup(string label) : ofxDatGuiButton(label), mWidth(0), mHeight(0), mIsExpanded(false), mIsHorizontal(false)
         {
-            mIsExpanded = false;
             layout();
         }
 
@@ -71,7 +71,17 @@ class ofxDatGuiGroup : public ofxDatGuiButton {
             mIsExpanded = false;
             layout();
         }
-
+    
+        void horizontal() {
+            mIsHorizontal = true;
+            layout();
+        }
+    
+        void vertical(){
+            mIsHorizontal = false;
+            layout();
+        }
+    
         int getHeight()
         {
             return mHeight;
@@ -84,48 +94,50 @@ class ofxDatGuiGroup : public ofxDatGuiButton {
 
         void draw()
         {
-            if (mVisible){
-                ofPushStyle();
-                ofxDatGuiButton::draw();
-                if (mIsExpanded) {
-                    int mHeight = mStyle.height;
-                    ofSetColor(mStyle.guiBackground, mStyle.opacity);
-                    ofDrawRectangle(x, y+mHeight, mStyle.width, mStyle.vMargin);
-                    for (size_t i=0; i<children.size(); ++i) {
-                        mHeight += mStyle.vMargin;
-                        children[i]->draw();
-                        mHeight += children[i]->getHeight();
-                        if (i == children.size()-1) break;
-                        ofSetColor(mStyle.guiBackground, mStyle.opacity);
-                        ofDrawRectangle(x, y+mHeight, mStyle.width, mStyle.vMargin);
-                    }
-                    ofSetColor(mIcon.color);
-                    mIconOpen->draw(x+mIcon.x, y+mIcon.y, mIcon.size, mIcon.size);
-                    for (auto &child : children) child->drawColorPicker();
-                }   else{
-                    ofSetColor(mIcon.color);
-                    mIconClosed->draw(x+mIcon.x, y+mIcon.y, mIcon.size, mIcon.size);
+            if (!mVisible)
+                return;
+
+            ofPushStyle();
+            ofxDatGuiButton::draw();
+            if (mIsExpanded) {
+                ofSetColor(mStyle.guiBackground, mStyle.opacity);
+                ofDrawRectangle(x+mWidth, y+mHeight, mStyle.width, mStyle.vMargin);
+                for (auto &child : children) {
+                    child->draw();
                 }
-                ofPopStyle();
+                ofSetColor(mIcon.color);
+                mIconOpen->draw(x+mIcon.x, y+mIcon.y, mIcon.size, mIcon.size);
+                for (auto &child : children) child->drawColorPicker();
+            }   else{
+                ofSetColor(mIcon.color);
+                mIconClosed->draw(x+mIcon.x, y+mIcon.y, mIcon.size, mIcon.size);
             }
+            ofPopStyle();
+        
         }
 
     protected:
 
         void layout()
         {
-            mHeight = mStyle.height + mStyle.vMargin;
-            for (size_t i=0; i<children.size(); ++i) {
-                if (children[i]->getVisible() == false) continue;
-                if (mIsExpanded == false){
-                    children[i]->setPosition(x, y + mHeight);
-                }   else{
-                    children[i]->setPosition(x, y + mHeight);
-                    mHeight += children[i]->getHeight() + mStyle.vMargin;
-                }
-                if (i == children.size()-1) mHeight -= mStyle.vMargin;
-            }
+            mWidth = 0;
+            mHeight = 0;
+            mIsHorizontal ? mWidth = mStyle.width + mStyle.vMargin
+                          : mHeight = mStyle.height + mStyle.vMargin;
 
+//            for (size_t i=0; i<children.size(); ++i) {
+            for (auto &child: children) {
+                if (child->getVisible() == false) continue;
+                if (mIsExpanded == false){
+                    child->setPosition(x, y + mHeight);
+                }   else{
+                    child->setPosition(x+mWidth, y + mHeight);
+                    mIsHorizontal ? mWidth += child->getWidth() + mStyle.vMargin
+                                  : mHeight += child->getHeight() + mStyle.vMargin;
+
+                }
+            }
+            mHeight -= mStyle.vMargin;
         }
 
         void onMouseRelease(ofPoint m)
@@ -149,10 +161,10 @@ class ofxDatGuiGroup : public ofxDatGuiButton {
             internalEventCallback(e);
         }
 
-        int mHeight;
+        int mWidth, mHeight;
         shared_ptr<ofImage> mIconOpen;
         shared_ptr<ofImage> mIconClosed;
-        bool mIsExpanded;
+        bool mIsExpanded, mIsHorizontal;
 
 };
 

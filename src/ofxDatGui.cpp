@@ -57,6 +57,7 @@ void ofxDatGui::init()
     mVisible = true;
     mEnabled = true;
     mExpanded = true;
+    mAutoDraw = true;
     mGuiHeader = nullptr;
     mGuiFooter = nullptr;
     mAlphaChanged = false;
@@ -279,6 +280,13 @@ ofxDatGuiLabel* ofxDatGui::addLabel(string label)
 ofxDatGuiButton* ofxDatGui::addButton(string label)
 {
     ofxDatGuiButton* button = new ofxDatGuiButton(label);
+    button->onButtonEvent(this, &ofxDatGui::onButtonEventCallback);
+    attachItem(button);
+    return button;
+}
+
+ofxDatGuiButtonImage* ofxDatGui::addButtonImage(string label, string imagePath, string imageClickPath){
+    ofxDatGuiButtonImage* button = new ofxDatGuiButtonImage(label,imagePath,imageClickPath);
     button->onButtonEvent(this, &ofxDatGui::onButtonEventCallback);
     attachItem(button);
     return button;
@@ -922,10 +930,9 @@ void ofxDatGui::draw()
     ofPopStyle();
 }
 
-void ofxDatGui::clear() {
-    for (auto it = items.begin(); it != items.end(); it++) {
-        delete (*it);
-    }
+void ofxDatGui::clear()
+{
+    for (auto &item : items) delete item;
     items.clear();
 }
 
