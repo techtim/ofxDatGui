@@ -1,0 +1,3 @@
+[submodule "src/libs/ofxSmartFont"]
+	path = src/libs/ofxSmartFont
+	url = https://github.com/braitsch/ofxSmartFont.git

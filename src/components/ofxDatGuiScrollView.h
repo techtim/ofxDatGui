@@ -66,7 +66,8 @@ class ofxDatGuiScrollView : public ofxDatGuiComponent {
 
         ofxDatGuiButton* get(int index)
         {
-            return static_cast<ofxDatGuiButton*>(children[index]);
+
+            return index < children.size() ? static_cast<ofxDatGuiButton*>(children[index]) : nullptr;
         }
 
         ofxDatGuiButton* get(string name)

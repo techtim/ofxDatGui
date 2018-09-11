@@ -87,6 +87,11 @@ class ofxDatGuiGroup : public ofxDatGuiButton {
             return mHeight;
         }
 
+        int getWidth()
+        {
+            return mWidth;
+        }
+
         bool getIsExpanded()
         {
             return mIsExpanded;
