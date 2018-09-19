@@ -1,16 +1,16 @@
 /*
  Copyright (C) 2017 Timofey Tavlintsev [http://tvl.io]
- 
+
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  copies of the Software, and to permit persons to whom the Software is
  furnished to do so, subject to the following conditions:
- 
+
  The above copyright notice and this permission notice shall be included in all
  copies or substantial portions of the Software.
- 
+
  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,68 +26,81 @@
 class ofxDatGuiButtonImage : public ofxDatGuiButton {
     unique_ptr<ofImage> image;
     unique_ptr<ofImage> imageClick;
+    bool bChangeBackgroundOnMouse;
+
 public:
-    
-    ofxDatGuiButtonImage(const string &label, string imagePath, string imageClickPath) : ofxDatGuiButton(label)
+    ofxDatGuiButtonImage(const string &label, string imagePath, string imageClickPath = "")
+        : ofxDatGuiButton(label)
+        , bChangeBackgroundOnMouse(false)
     {
         mType = ofxDatGuiType::BUTTON_IMAGE;
         image = make_unique<ofImage>();
         bool bLoad = image->load(imagePath);
         assert(bLoad);
-        imageClick = make_unique<ofImage>(imageClickPath);
-        bLoad = imageClick->load(imageClickPath);
+        if (imageClickPath == "") {
+            bChangeBackgroundOnMouse = true;
+            imageClick = make_unique<ofImage>();
+            bLoad = imageClick->load(imagePath);
+        }
+        else {
+            imageClick = make_unique<ofImage>();
+            bLoad = imageClick->load(imageClickPath);
+        }
+
         assert(bLoad);
         setTheme(ofxDatGuiComponent::getTheme());
     }
-    
-    void setTheme(const ofxDatGuiTheme* theme)
+
+    void setTheme(const ofxDatGuiTheme *theme)
     {
         setComponentStyle(theme);
         mStyle.stripe.color = theme->stripe.button;
         mStyle.height = ofxDatGuiIsRetina() ? image->getHeight() / 2 : image->getHeight();
         setWidth(image->getWidth(), theme->layout.labelWidth);
     }
-    
+
     void setWidth(int width, float labelWidth = 1)
     {
         ofxDatGuiComponent::setWidth(width, labelWidth);
         mLabel.x = getWidth();
         mLabel.width = mStyle.width;
         mLabel.rightAlignedXpos = mLabel.width - mLabel.margin;
-//        ofxDatGuiComponent::positionLabel();
+        //        ofxDatGuiComponent::positionLabel();
     }
-    
+
     void draw()
     {
         if (mVisible) {
             // anything that extends ofxDatGuiButton has the same rollover effect //
             ofPushStyle();
-            if (mStyle.border.visible) drawBorder();
+            if (mStyle.border.visible)
+                drawBorder();
             ofFill();
             ofDisableAlphaBlending();
-            ofSetColor(255);
-            ofDrawRectangle(x, y, getWidth(), getHeight());
-            if (mFocused && mMouseDown){
-//                ofSetColor(mStyle.color.onMouseDown, mStyle.opacity);
-                imageClick->draw(x,y);
-            }   else if (mMouseOver){
-                image->draw(x,y);
+            if (bChangeBackgroundOnMouse) {
+                (mMouseOver || mMouseDown) ? ofSetColor(255) : ofSetColor(200);
+                ofDrawRectangle(x, y, getWidth(), getHeight());
+            }
+
+            if (mFocused && mMouseDown) {
+                imageClick->draw(x, y);
+            }
+            else if (mMouseOver) {
+                image->draw(x, y);
                 drawLabel();
-            }   else{
-                image->draw(x,y);
             }
-            if (mMouseOver) {
-                
+            else {
+                image->draw(x, y);
             }
-            if (mStyle.stripe.visible) drawStripe();
+            if (mStyle.stripe.visible)
+                drawStripe();
             ofPopStyle();
         }
     }
-    
-    static ofxDatGuiButton* getInstance() { return new ofxDatGuiButton("X"); }
-    
+
+    static ofxDatGuiButton *getInstance() { return new ofxDatGuiButton("X"); }
+
 protected:
-    
     void onMouseRelease(ofPoint m)
     {
         ofxDatGuiComponent::onFocusLost();
@@ -96,9 +109,9 @@ protected:
         if (buttonEventCallback != nullptr) {
             ofxDatGuiButtonEvent e(this);
             buttonEventCallback(e);
-        }   else{
+        }
+        else {
             ofxDatGuiLog::write(ofxDatGuiMsg::EVENT_HANDLER_NULL);
         }
     }
-    
 };
