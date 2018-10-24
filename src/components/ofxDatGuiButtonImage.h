@@ -103,15 +103,94 @@ public:
 protected:
     void onMouseRelease(ofPoint m)
     {
-        ofxDatGuiComponent::onFocusLost();
-        ofxDatGuiComponent::onMouseRelease(m);
-        // dispatch event out to main application //
-        if (buttonEventCallback != nullptr) {
-            ofxDatGuiButtonEvent e(this);
-            buttonEventCallback(e);
+        ofxDatGuiButton::onMouseRelease(move(m));
+    }
+};
+
+class ofxDatGuiToggleImage : public ofxDatGuiToggle {
+    unique_ptr<ofImage> image;
+    unique_ptr<ofImage> imageClick;
+    bool bChangeBackgroundOnMouse;
+
+public:
+    ofxDatGuiToggleImage(const string &label, string imagePath, string imageClickPath = "")
+        : ofxDatGuiToggle(label)
+        , bChangeBackgroundOnMouse(false)
+    {
+        mType = ofxDatGuiType::BUTTON_TOGGLE;
+        image = make_unique<ofImage>();
+        bool bLoad = image->load(imagePath);
+        assert(bLoad);
+        if (imageClickPath == "") {
+            bChangeBackgroundOnMouse = true;
+            imageClick = make_unique<ofImage>();
+            bLoad = imageClick->load(imagePath);
         }
         else {
-            ofxDatGuiLog::write(ofxDatGuiMsg::EVENT_HANDLER_NULL);
+            imageClick = make_unique<ofImage>();
+            bLoad = imageClick->load(imageClickPath);
         }
+
+        assert(bLoad);
+        setTheme(ofxDatGuiComponent::getTheme());
+    }
+
+    void setTheme(const ofxDatGuiTheme *theme)
+    {
+        setComponentStyle(theme);
+        mStyle.stripe.color = theme->stripe.button;
+        mStyle.height = ofxDatGuiIsRetina() ? image->getHeight() / 2 : image->getHeight();
+        setWidth(image->getWidth(), theme->layout.labelWidth);
+    }
+
+    void setWidth(int width, float labelWidth = 1)
+    {
+        ofxDatGuiComponent::setWidth(width, labelWidth);
+        mLabel.x = getWidth();
+        mLabel.width = mStyle.width;
+        mLabel.rightAlignedXpos = mLabel.width - mLabel.margin;
+        //        ofxDatGuiComponent::positionLabel();
+    }
+    void draw()
+    {
+        if (ofxDatGuiToggle::mVisible) {
+            // anything that extends ofxDatGuiButton has the same rollover effect //
+            ofPushStyle();
+            if (ofxDatGuiToggle::mStyle.border.visible)
+                ofxDatGuiToggle::drawBorder();
+            ofFill();
+            ofDisableAlphaBlending();
+            if (bChangeBackgroundOnMouse) {
+                (ofxDatGuiToggle::mMouseOver || ofxDatGuiToggle::mMouseDown
+                    || ofxDatGuiToggle::getChecked())
+                    ? ofSetColor(255)
+                    : ofSetColor(200);
+                ofDrawRectangle(ofxDatGuiToggle::x, ofxDatGuiToggle::y, ofxDatGuiToggle::getWidth(),
+                    ofxDatGuiToggle::getHeight());
+            }
+
+            if ((ofxDatGuiToggle::mFocused && ofxDatGuiToggle::mMouseDown)
+                || ofxDatGuiToggle::getChecked()) {
+                imageClick->draw(ofxDatGuiToggle::x, ofxDatGuiToggle::y);
+            }
+            else if (ofxDatGuiToggle::mMouseOver) {
+                image->draw(ofxDatGuiToggle::x, ofxDatGuiToggle::y);
+                ofxDatGuiToggle::drawLabel();
+            }
+            else {
+                image->draw(ofxDatGuiToggle::x, ofxDatGuiToggle::y);
+            }
+            if (ofxDatGuiToggle::mStyle.stripe.visible)
+                ofxDatGuiToggle::drawStripe();
+            ofPopStyle();
+        }
+    }
+
+    static ofxDatGuiToggle *getInstance() { return new ofxDatGuiToggle("X"); }
+
+protected:
+    void onMouseRelease(ofPoint m)
+    {
+        ofxDatGuiToggle::onMouseRelease(move(m));
     }
 };

@@ -65,6 +65,7 @@ class ofxDatGui : public ofxDatGuiInteractiveObject
         ofxDatGuiButton* addButton(string label);
         ofxDatGuiButtonImage* addButtonImage(string label, string imagePath, string imageClickPath = "");
         ofxDatGuiToggle* addToggle(string label, bool state = false);
+        ofxDatGuiToggleImage* addToggleImage(string label, string imagePath, string imageClickPath = "");
         ofxDatGuiSlider* addSlider(string label, float min, float max);
         ofxDatGuiSlider* addSlider(string label, float min, float max, float val);
         ofxDatGuiSlider* addSlider(ofParameter<int> & p);

@@ -72,7 +72,8 @@ enum class ofxDatGuiType
     COLOR_PICKER,
     WAVE_MONITOR,
     VALUE_PLOTTER,
-    BUTTON_IMAGE
+    BUTTON_IMAGE,
+    BUTTON_TOGGLE
 };
 
 

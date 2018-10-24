@@ -292,6 +292,13 @@ ofxDatGuiButtonImage* ofxDatGui::addButtonImage(string label, string imagePath, 
     return button;
 }
 
+ofxDatGuiToggleImage* ofxDatGui::addToggleImage(string label, string imagePath, string imageClickPath){
+    ofxDatGuiToggleImage* toggle = new ofxDatGuiToggleImage(label,imagePath,imageClickPath);
+    toggle->onToggleEvent(this, &ofxDatGui::onToggleEventCallback);
+    attachItem(toggle);
+    return toggle;
+}
+
 ofxDatGuiToggle* ofxDatGui::addToggle(string label, bool enabled)
 {
     ofxDatGuiToggle* button = new ofxDatGuiToggle(label, enabled);

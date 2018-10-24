@@ -75,18 +75,19 @@ class ofxDatGuiColorPicker : public ofxDatGuiTextInput {
         {
             mColor = color;
             setTextFieldInputColor();
+            gColors[2] = mColor;
+            gColors[0] = ofColor(mColor.r/2, mColor.g/2, mColor.b/2);
+            vbo.setColorData(&gColors[0], 6, GL_DYNAMIC_DRAW);
         }
     
         void setColor(int hex)
         {
-            mColor = ofColor::fromHex(hex);
-            setTextFieldInputColor();
+            setColor(ofColor::fromHex(hex));
         }
     
         void setColor(int r, int g, int b, int a = 255)
         {
-            mColor = ofColor(r, g, b, a);
-            setTextFieldInputColor();
+            setColor(ofColor(r, g, b, a));
         }
     
         ofColor getColor()
@@ -189,7 +190,7 @@ class ofxDatGuiColorPicker : public ofxDatGuiTextInput {
         void onMouseLeave(ofPoint mouse)
         {
             mShowPicker = false;
-            ofxDatGuiTextInput::onMouseLeave(mouse);
+            ofxDatGuiComponent::onMouseLeave(mouse);
             if (!mInput.hasFocus()) ofxDatGuiComponent::onFocusLost();
         }
     
