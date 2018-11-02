@@ -70,10 +70,8 @@ void ofxDatGui::init()
     mRowSpacing = ofxDatGuiComponent::getTheme()->layout.vMargin;
     mGuiBackground = ofxDatGuiComponent::getTheme()->color.guiBackground;
 
-// disable autodraw by default //
-    setAutoDraw(false);
 // enable autodraw by default //
-//    setAutoDraw(true, mGuis.size());
+    setAutoDraw(true, mGuis.size());
     setAssetPath("");
 // assign focus to this newly created gui //
     mActiveGui = this;
@@ -940,6 +938,8 @@ void ofxDatGui::draw()
 void ofxDatGui::clear()
 {
     for (auto &item : items) delete item;
+    mGuiHeader = nullptr;
+    mGuiFooter = nullptr;
     items.clear();
 }
 
